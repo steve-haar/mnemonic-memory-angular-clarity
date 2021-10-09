@@ -1,0 +1,41 @@
+<h1 cds-text="display">Mnemonic Major System Calculator</h1>
+
+<p cds-text="message" class="margin-top">
+  Enter in a number to convert to words using the <a routerLink="/about">mnemonic major system</a>. We've prefilled the
+  input with the first 100 digits of pie to get you started.
+</p>
+
+<div class="margin-top">
+  <cds-textarea>
+    <label>digits</label>
+    <textarea [formControl]="digitsControl" digitsOnly></textarea>
+    <cds-control-message>message text</cds-control-message>
+  </cds-textarea>
+
+  <div cds-layout="horizontal gap:sm" class="margin-top">
+    <cds-button (click)="solve()">solve</cds-button>
+    <cds-button (click)="clear()" action="outline">clear</cds-button>
+  </div>
+</div>
+
+<div *ngIf="{ value: chosenMnemonicWords | async }; let chosenMnemonicWords">
+  <h2 *ngIf="{ value: (chosenDigitsLength | async) || 0 }; let chosenDigitsLength" class="digits">
+    <span class="chosen-digits">{{digitsControl.value | slice:0:chosenDigitsLength.value}}</span>
+    <span>{{digitsControl.value | slice:chosenDigitsLength.value}}</span>
+    <span>&nbsp;({{chosenDigitsLength.value}}/{{digitsControl.value.length}})</span>
+  </h2>
+
+  <cds-tag *ngFor="let mnemonicWord of chosenMnemonicWords.value" (click)="removeWord(mnemonicWord)" status="success">
+    {{mnemonicWord.word}}
+    <cds-badge aria-label="digits" status="info">{{mnemonicWord.digits.length}}</cds-badge>
+  </cds-tag>
+
+  <div>({{(chosenMnemonicWords.value || []).length}} words)</div>
+</div>
+
+<div class="margin-top">
+  <cds-tag *ngFor="let mnemonicWord of potentialMnemonicWords | async" (click)="addWord(mnemonicWord)" status="info">
+    {{mnemonicWord.word}}
+    <cds-badge aria-label="digits" status="info">{{mnemonicWord.digits.length}}</cds-badge>
+  </cds-tag>
+</div>
